@@ -29,6 +29,7 @@ const AddStreamer: React.FC<AddStreamerType> = ({
             <AddNewStreamer
                 addStreamer={addStreamer}
                 changeChatroomStreamer={changeChatroomStreamer}
+                streamers={streamers}
             />
         </div>
     );
@@ -87,35 +88,47 @@ const AddStreamerItem: React.FC<AddStreamerItemType> = ({
 type AddNewStreamerType = {
     addStreamer: (streamer: string) => void;
     changeChatroomStreamer: (streamer: string) => void;
+    streamers: string[];
 };
 
 const AddNewStreamer: React.FC<AddNewStreamerType> = ({
     addStreamer,
     changeChatroomStreamer,
+    streamers,
 }) => {
     const [inputStreamer, setInputStreamer] = useState("");
+    const [errorMessage, setErrorMessage] = useState("");
 
     const onAddStreamer = () => {
-        addStreamer(inputStreamer);
-        setInputStreamer("");
-        changeChatroomStreamer(inputStreamer);
+        if (inputStreamer === "") {
+            setErrorMessage("Streamer name cannot be empty");
+        } else if (streamers.includes(inputStreamer)) {
+            setErrorMessage("Streamer already added");
+        } else {
+            addStreamer(inputStreamer);
+            setInputStreamer("");
+            changeChatroomStreamer(inputStreamer);
+        }
     };
 
     return (
-        <div className="flex gap-2 p-4">
-            <input
-                className="box-border rounded border border-gray-500 bg-gray-500 px-2 outline-none focus:border-white"
-                value={inputStreamer}
-                placeholder="Streamer Name (e.g xqc)"
-                onChange={(e) => setInputStreamer(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && onAddStreamer()}
-            />
-            <button
-                className="rounded bg-kick-green p-3 text-black"
-                onClick={onAddStreamer}
-            >
-                Add
-            </button>
+        <div className="flex flex-col gap-2 p-4">
+            <div className="flex gap-2">
+                <input
+                    className="box-border rounded border border-gray-500 bg-gray-500 px-2 outline-none focus:border-white"
+                    value={inputStreamer}
+                    placeholder="Streamer Name (e.g xqc)"
+                    onChange={(e) => setInputStreamer(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && onAddStreamer()}
+                />
+                <button
+                    className="rounded bg-kick-green p-3 text-black hover:brightness-75"
+                    onClick={onAddStreamer}
+                >
+                    Add
+                </button>
+            </div>
+            <p className="text-center text-sm text-red-500">{errorMessage}</p>
         </div>
     );
 };

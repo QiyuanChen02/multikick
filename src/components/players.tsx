@@ -44,7 +44,9 @@ const Players: React.FC<PlayersType> = ({ streamers, chatroomOpen }) => {
         <div
             ref={ref}
             className={`flex h-full ${
-                chatroomOpen ? "w-[calc(100%-400px)]" : "w-full"
+                chatroomOpen
+                    ? "invisible w-0 sm:visible md:w-[calc(100%-400px)]"
+                    : "w-full"
             } flex-wrap content-center justify-center`}
         >
             {streamers.map((streamer) => (

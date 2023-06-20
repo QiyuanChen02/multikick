@@ -21,59 +21,55 @@ export default function Home() {
         setChatroomStreamer(streamer);
 
     const addStreamer = (streamer: string) => {
-        if (streamer === "") {
-            alert("Streamer name cannot be empty");
-        } else if (streamers.includes(streamer)) {
-            alert("Streamer already added");
-        } else {
-            setStreamers((streamers) => {
-                return streamers ? [...streamers, streamer] : [streamer];
-            });
-        }
+        setStreamers((streamers) => {
+            return streamers ? [...streamers, streamer] : [streamer];
+        });
     };
 
     const deleteStreamer = (streamer: string) => {
         const streamerIndex = streamers.indexOf(streamer);
-        const nextChatroomStreamer =
-            streamerIndex === 0 ? streamers[1] : streamers[streamerIndex - 1];
-        setStreamers((streamers) => {
-            return streamers.filter((s) => s !== streamer);
-        });
-        changeChatroomStreamer(nextChatroomStreamer ?? "");
+        const currentChatroomIndex = streamers.indexOf(chatroomStreamer);
+        if (streamerIndex === currentChatroomIndex) {
+            const nextChatroomStreamer =
+                streamerIndex === 0
+                    ? streamers[1]
+                    : streamers[streamerIndex - 1];
+            changeChatroomStreamer(nextChatroomStreamer ?? "");
+        }
+        setStreamers((streamers) => streamers.filter((s) => s !== streamer));
     };
-
-    if (loadingStreamers || loadingChatroomStreamer)
-        return (
-            <main className="h-screen w-screen flex-col bg-gray-900">
-                <LoadingSpinner width={72} height={72} />
-            </main>
-        );
 
     return (
         <>
-            <Head
-                title="multikick"
-                description="watch the hottest kick streams at the same time with multikick"
-                url="https://multikick.vercel.app/"
-            />
+            <Head />
 
-            <main className="flex h-screen w-screen flex-col bg-gray-900 font-semibold text-white">
+            <main className="flex h-screen w-screen flex-col items-center bg-gray-900 font-semibold text-white">
+                {(loadingStreamers || loadingChatroomStreamer) && (
+                    <div className="absolute left-0 top-0 z-10 h-screen w-screen bg-gray-900">
+                        <LoadingSpinner width={72} height={72} />
+                    </div>
+                )}
                 {streamers.length === 0 ? (
-                    <div className="flex h-[calc(100%-50px)] w-full flex-col items-center justify-center gap-8">
-                        <h1 className="w-5/6 text-center text-5xl lg:w-1/2">
+                    <div className="flex h-[calc(100%-50px)] w-5/6 flex-col items-center justify-center gap-8 bg-gradient-to-tr lg:w-1/2">
+                        <h1 className="text-center text-5xl">
                             Welcome to MultiKick!
                         </h1>
-                        <h2 className="w-5/6 text-center text-3xl lg:w-1/2">
+                        <h2 className="text-center text-3xl">
                             With this website, you can watch as many Kick
                             streamers as you want at the same time. To get
                             started, add a streamer.
                         </h2>
                         <button
-                            className="mt-2 rounded bg-kick-green px-4 py-3 text-xl text-black hover:cursor-pointer"
+                            className="mt-2 rounded bg-kick-green px-4 py-3 text-xl text-black hover:cursor-pointer hover:brightness-75"
                             onClick={toggleModalOpen}
                         >
                             Add Streamer
                         </button>
+                        <p className="w-4/5 text-center text-sm">
+                            Please note that due to Kick&#x2E;com&#8217;s
+                            current implementation, you cannot use the chat
+                            unless you go directly onto their website.
+                        </p>
                     </div>
                 ) : (
                     <div className="flex h-[calc(100%-50px)] w-full">
@@ -83,7 +79,7 @@ export default function Home() {
                         />
 
                         {chatroomOpen && (
-                            <div className="h-full w-[400px]">
+                            <div className="h-full w-full md:w-[400px]">
                                 <Chatroom
                                     streamers={streamers}
                                     chatroomStreamer={chatroomStreamer}
@@ -100,18 +96,25 @@ export default function Home() {
 
                 <div className="flex h-[50px] items-center justify-center">
                     <button
-                        className="px-2 hover:cursor-pointer"
+                        className="hover:bright px-2 hover:cursor-pointer"
                         onClick={toggleModalOpen}
                     >
                         Add Streamer
                     </button>
                     <p>|</p>
                     <button
+                        className="hover:bright px-2 hover:cursor-pointer"
+                        onClick={toggleChatroomOpen}
+                    >
+                        {chatroomOpen ? "Hide " : "Show "}Chat
+                    </button>
+                    {/* <p>|</p> */}
+                    {/* <button
                         className="px-2 hover:cursor-pointer"
                         onClick={toggleChatroomOpen}
                     >
-                        Toggle Chat
-                    </button>
+                        Share Link
+                    </button> */}
                 </div>
 
                 <Card visible={modalOpen}>

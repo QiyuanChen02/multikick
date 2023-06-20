@@ -1,34 +1,43 @@
 import NextHead from "next/head";
 
-type HeadType = {
-    title?: string;
-    description?: string;
-    url?: string;
-    image?: string;
-};
-
-/** Displays the head for each page. Includes open graph tags. @see https://ogp.me/ */
-const Head: React.FC<HeadType> = ({
-    title = "",
-    description = "",
-    url = "",
-    image = "",
-}) => {
+/** Meta Tags Generated with https://metatags.io */
+const Head: React.FC = () => {
     return (
         <NextHead>
-            <title>{title}</title>
-            <meta property="og:title" content={title} />
-            <meta name="description" content={description} />
-            <link rel="icon" href="/favicon.ico" />
+            <title>MultiKick</title>
+            <link rel="icon" href="/img/favicon.ico" />
+            <meta name="title" content="MultiKick" />
+            <meta
+                name="description"
+                content="Watch the hottest kick streams at the same time with MultiKick!"
+            />
 
             <meta property="og:type" content="website" />
-            <meta property="og:description" content={description} />
-            <meta property="og:url" content={url} />
-            <meta property="og:image" content={image} />
+            <meta property="og:url" content="https://multikick.vercel.app/" />
+            <meta property="og:title" content="MultiKick" />
+            <meta
+                property="og:description"
+                content="Watch the hottest kick streams at the same time with MultiKick!"
+            />
+            <meta
+                property="og:image"
+                content="https://multikick.vercel.app/img/kicklogofull.svg"
+            />
 
-            <meta name="twitter:title" content={title} />
-            <meta name="twitter:description" content={description} />
-            <meta name="twitter:image" content={image} />
+            <meta property="twitter:card" content="summary_large_image" />
+            <meta
+                property="twitter:url"
+                content="https://multikick.vercel.app/"
+            />
+            <meta property="twitter:title" content="MultiKick" />
+            <meta
+                property="twitter:description"
+                content="Watch the hottest kick streams at the same time with MultiKick!"
+            />
+            <meta
+                property="twitter:image"
+                content="https://multikick.vercel.app/img/kicklogofull.svg"
+            />
         </NextHead>
     );
 };
