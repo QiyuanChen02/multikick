@@ -19,13 +19,15 @@ const AddStreamer: React.FC<AddStreamerType> = ({
     return (
         <div className="no-scrollbar flex flex-col gap-2 overflow-auto">
             <AddStreamerTitle toggleModalOpen={toggleModalOpen} />
-            {streamers.map((streamer) => (
-                <AddStreamerItem
-                    key={streamer}
-                    streamer={streamer}
-                    deleteStreamer={deleteStreamer}
-                />
-            ))}
+            <div className="max-h-96 overflow-y-auto">
+                {streamers.map((streamer) => (
+                    <AddStreamerItem
+                        key={streamer}
+                        streamer={streamer}
+                        deleteStreamer={deleteStreamer}
+                    />
+                ))}
+            </div>
             <AddNewStreamer
                 addStreamer={addStreamer}
                 changeChatroomStreamer={changeChatroomStreamer}
@@ -68,7 +70,7 @@ const AddStreamerItem: React.FC<AddStreamerItemType> = ({
     deleteStreamer,
 }) => {
     return (
-        <div className="flex items-center px-4 py-2 hover:bg-gray-600">
+        <div className="flex items-center px-4 py-1 hover:bg-gray-600">
             <p className="flex-1 bg-transparent decoration-gray-400 placeholder-gray-400 outline-none">
                 {streamer}
             </p>
@@ -111,14 +113,19 @@ const AddNewStreamer: React.FC<AddNewStreamerType> = ({
         }
     };
 
+    const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInputStreamer(e.target.value);
+        setErrorMessage("");
+    };
+
     return (
-        <div className="flex flex-col gap-2 p-4">
+        <div className="flex flex-col gap-2 px-4 py-2">
             <div className="flex gap-2">
                 <input
                     className="box-border rounded border border-gray-500 bg-gray-500 px-2 outline-none focus:border-white"
                     value={inputStreamer}
                     placeholder="Streamer Name (e.g xqc)"
-                    onChange={(e) => setInputStreamer(e.target.value)}
+                    onChange={onInputChange}
                     onKeyDown={(e) => e.key === "Enter" && onAddStreamer()}
                 />
                 <button
