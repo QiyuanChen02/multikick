@@ -55,6 +55,7 @@ const AddStreamerTitle: React.FC<AddStreamerTitleType> = ({
                 width={20}
                 height={20}
                 spacing={5}
+                extraClasses="no-drag"
             />
         </div>
     );

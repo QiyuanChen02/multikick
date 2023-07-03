@@ -14,6 +14,7 @@ const Card: React.FC<CardType> = ({ children, visible }) => {
         <Draggable
             nodeRef={nodeRef}
             handle=".drag-handle"
+            cancel=".no-drag"
             positionOffset={{ x: "-50%", y: "-50%" }}
         >
             <section

@@ -4,11 +4,13 @@ import Head from "~/components/helpers/head";
 import IconButton from "~/components/helpers/iconbutton";
 import { LoadingSpinner } from "~/components/helpers/loading";
 import Players from "~/components/players";
+import ShareLayout from "~/components/shareLayout";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
 import { useToggle } from "~/hooks/useToggle";
 
 export default function Home() {
     const [modalOpen, toggleModalOpen] = useToggle(false);
+    const [shareOpen, toggleShareOpen] = useToggle(false);
     const [chatroomOpen, toggleChatroomOpen] = useToggle(true);
 
     const [streamers, setStreamers, loadingStreamers] = useLocalStorage<
@@ -108,13 +110,13 @@ export default function Home() {
                     >
                         {chatroomOpen ? "Hide " : "Show "}Chat
                     </button>
-                    {/* <p>|</p> */}
-                    {/* <button
+                    <p>|</p>
+                    <button
                         className="px-2 hover:cursor-pointer"
-                        onClick={toggleChatroomOpen}
+                        onClick={() => toggleShareOpen()}
                     >
-                        Share Link
-                    </button> */}
+                        Share Layout
+                    </button>
                 </div>
 
                 <Card visible={modalOpen}>
@@ -124,6 +126,13 @@ export default function Home() {
                         deleteStreamer={deleteStreamer}
                         toggleModalOpen={toggleModalOpen}
                         changeChatroomStreamer={changeChatroomStreamer}
+                    />
+                </Card>
+
+                <Card visible={shareOpen}>
+                    <ShareLayout
+                        streamers={streamers}
+                        toggleShareOpen={toggleShareOpen}
                     />
                 </Card>
             </main>
