@@ -52,7 +52,7 @@ export default function Home() {
                     </div>
                 )}
                 {streamers.length === 0 ? (
-                    <div className="flex h-[calc(100%-50px)] w-5/6 flex-col items-center justify-center gap-8 bg-gradient-to-tr lg:w-1/2">
+                    <div className="flex h-[calc(100%-50px)] w-5/6 flex-col items-center justify-center gap-8 bg-linear-to-tr lg:w-1/2">
                         <h1 className="text-center text-5xl">
                             Welcome to MultiKick!
                         </h1>
@@ -157,7 +157,7 @@ const Chatroom: React.FC<ChatroomType> = ({
 }) => {
     return (
         <div className="flex h-full flex-col">
-            <div className="flex flex-wrap gap-[1px]">
+            <div className="flex flex-wrap gap-px">
                 {streamers.map((streamer) => (
                     <div
                         className={`group flex h-9 items-center gap-1 px-2 ${
