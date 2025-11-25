@@ -1,21 +1,30 @@
 import AddStreamer from "~/components/addStreamer";
+import Chatroom from "~/components/chatroom";
 import Card from "~/components/helpers/card";
 import Head from "~/components/helpers/head";
-import IconButton from "~/components/helpers/iconbutton";
 import { LoadingSpinner } from "~/components/helpers/loading";
+import Landing from "~/components/landing";
 import Players from "~/components/players";
 import ShareLayout from "~/components/shareLayout";
 import { useLocalStorage } from "~/hooks/useLocalStorage";
 import { useToggle } from "~/hooks/useToggle";
 
+/**
+ * Main application page.
+ * Orchestrates state management for streamers, chat, and modals.
+ */
 export default function Home() {
+    // Modal visibility toggles
     const [modalOpen, toggleModalOpen] = useToggle(false);
     const [shareOpen, toggleShareOpen] = useToggle(false);
     const [chatroomOpen, toggleChatroomOpen] = useToggle(true);
 
+    // Streamer list synced with localStorage and URL params
     const [streamers, setStreamers, loadingStreamers] = useLocalStorage<
         string[]
     >([], "streamers");
+    
+    // Currently active chatroom
     const [chatroomStreamer, setChatroomStreamer, loadingChatroomStreamer] =
         useLocalStorage<string>("", "chatroomStreamer");
 
@@ -28,16 +37,23 @@ export default function Home() {
         });
     };
 
+    /**
+     * Delete a streamer and handle chatroom switching.
+     * If the deleted streamer is the active chat, switch to an adjacent streamer.
+     */
     const deleteStreamer = (streamer: string) => {
         const streamerIndex = streamers.indexOf(streamer);
         const currentChatroomIndex = streamers.indexOf(chatroomStreamer);
+        
+        // If deleting the active chatroom, switch to previous or next streamer
         if (streamerIndex === currentChatroomIndex) {
             const nextChatroomStreamer =
                 streamerIndex === 0
-                    ? streamers[1]
-                    : streamers[streamerIndex - 1];
+                    ? streamers[1] // First item: switch to next
+                    : streamers[streamerIndex - 1]; // Otherwise: switch to previous
             changeChatroomStreamer(nextChatroomStreamer ?? "");
         }
+        
         setStreamers((streamers) => streamers.filter((s) => s !== streamer));
     };
 
@@ -46,38 +62,23 @@ export default function Home() {
             <Head />
 
             <main className="flex h-screen w-screen flex-col items-center bg-gray-900 font-semibold text-white">
+                {/* Show loading spinner during initial hydration to prevent UI flash */}
                 {(loadingStreamers || loadingChatroomStreamer) && (
                     <div className="absolute left-0 top-0 z-10 h-screen w-screen bg-gray-900">
                         <LoadingSpinner width={72} height={72} />
                     </div>
                 )}
+                
+                {/* Welcome screen when no streamers added */}
                 {streamers.length === 0 ? (
-                    <div className="flex h-[calc(100%-50px)] w-5/6 flex-col items-center justify-center gap-8 bg-linear-to-tr lg:w-1/2">
-                        <h1 className="text-center text-5xl">
-                            Welcome to MultiKick!
-                        </h1>
-                        <h2 className="text-center text-3xl">
-                            With this website, you can watch as many Kick
-                            streamers as you want at the same time. To get
-                            started, add a streamer.
-                        </h2>
-                        <button
-                            className="mt-2 rounded bg-kick-green px-4 py-3 text-xl text-black hover:cursor-pointer hover:brightness-75"
-                            onClick={toggleModalOpen}
-                        >
-                            Add Streamer
-                        </button>
-                        <p className="w-4/5 text-center text-sm">
-                            Please note that due to Kick&#x2E;com&#8217;s
-                            current implementation, you cannot use the chat
-                            unless you go directly onto their website.
-                        </p>
-                    </div>
+                    <Landing toggleModalOpen={toggleModalOpen} />
                 ) : (
+                    // Main layout with players and optional chatroom
                     <div className="flex h-[calc(100%-50px)] w-full">
                         <Players
                             streamers={streamers}
                             chatroomOpen={chatroomOpen}
+                            deleteStreamer={deleteStreamer}
                         />
 
                         {chatroomOpen && (
@@ -96,29 +97,31 @@ export default function Home() {
                     </div>
                 )}
 
+                {/* Bottom navigation bar */}
                 <div className="flex h-[50px] items-center justify-center">
                     <button
-                        className="hover:bright px-2 hover:cursor-pointer"
+                        className="hover:text-kick-green px-2 hover:cursor-pointer"
                         onClick={toggleModalOpen}
                     >
                         Add Streamer
                     </button>
                     <p>|</p>
                     <button
-                        className="hover:bright px-2 hover:cursor-pointer"
+                        className="hover:text-kick-green px-2 hover:cursor-pointer"
                         onClick={toggleChatroomOpen}
                     >
                         {chatroomOpen ? "Hide " : "Show "}Chat
                     </button>
                     <p>|</p>
                     <button
-                        className="px-2 hover:cursor-pointer"
+                        className="hover:text-kick-green px-2 hover:cursor-pointer"
                         onClick={() => toggleShareOpen()}
                     >
                         Share Layout
                     </button>
                 </div>
 
+                {/* Draggable modals */}
                 <Card visible={modalOpen}>
                     <AddStreamer
                         streamers={streamers}
@@ -139,66 +142,3 @@ export default function Home() {
         </>
     );
 }
-
-type ChatroomType = {
-    streamers: string[];
-    chatroomStreamer: string;
-    changeChatroomStreamer: (streamer: string) => void;
-    toggleModalOpen: () => void;
-    deleteStreamer: (streamer: string) => void;
-};
-
-const Chatroom: React.FC<ChatroomType> = ({
-    streamers,
-    chatroomStreamer,
-    changeChatroomStreamer,
-    toggleModalOpen,
-    deleteStreamer,
-}) => {
-    return (
-        <div className="flex h-full flex-col">
-            <div className="flex flex-wrap gap-px">
-                {streamers.map((streamer) => (
-                    <div
-                        className={`group flex h-9 items-center gap-1 px-2 ${
-                            chatroomStreamer === streamer
-                                ? "border-t-2 border-kick-green bg-gray-500"
-                                : "bg-gray-700 hover:bg-gray-600"
-                        }`}
-                        key={streamer}
-                        onClick={() => changeChatroomStreamer(streamer)}
-                    >
-                        <p className="translate-x-[13px] translate-y-[-2px] cursor-default group-hover:translate-x-0">
-                            {streamer}
-                        </p>
-                        <IconButton
-                            imageSrc="helpers/close.svg"
-                            hoverColour="hover:bg-gray-700"
-                            altText="Close the tab"
-                            onClick={() => deleteStreamer(streamer)}
-                            width={20}
-                            height={20}
-                            spacing={1}
-                            visibleOnParentHover
-                            eventPropagation={false}
-                        />
-                    </div>
-                ))}
-
-                <button
-                    className="h-9 px-2 text-2xl hover:bg-gray-600"
-                    onClick={() => toggleModalOpen()}
-                >
-                    +
-                </button>
-            </div>
-            {chatroomStreamer && (
-                <iframe
-                    className="w-full flex-1"
-                    src={`https://kick.com/${chatroomStreamer}/chatroom`}
-                    title="title"
-                ></iframe>
-            )}
-        </div>
-    );
-};

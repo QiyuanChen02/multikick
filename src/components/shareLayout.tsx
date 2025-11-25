@@ -1,50 +1,48 @@
 import { useEffect, useRef, useState } from "react";
 import IconButton from "./helpers/iconbutton";
+import Modal from "./helpers/modal";
 
 type ShareLayoutType = {
     toggleShareOpen: () => void;
     streamers: string[];
 };
 
+/**
+ * Modal for generating and copying shareable URLs.
+ * Encodes current streamer list as URL query parameters.
+ */
 const ShareLayout: React.FC<ShareLayoutType> = ({
     toggleShareOpen,
     streamers,
 }) => {
     const [url, setUrl] = useState("");
+    const [copied, setCopied] = useState(false);
 
+    // Format streamer list as "xqc, shroud and trainwreckstv"
     const streamersFormatted = streamers
         .join(", ")
-        .replace(/, ([^,]*)$/, " and $1"); // replace last comma with and
+        .replace(/, ([^,]*)$/, " and $1");
 
     const inputRef = useRef<HTMLInputElement>(null);
 
+    // Generate shareable URL when streamers change
     useEffect(() => {
-        setUrl(window.location.origin + "?streamers=" + streamers.join(","));
+        setUrl(window.location.origin + "/" + streamers.join("/"));
     }, [streamers]);
 
     const onCopy = async () => {
-        inputRef.current?.select();
+        setCopied(true);
+        
+        // Reset copied state after 3 seconds
+        setTimeout(() => setCopied(false), 3000);
         await navigator.clipboard.writeText(url);
     };
 
     return (
-        <div className="flex flex-col">
-            <div className="drag-handle flex select-none items-center justify-between border-b border-gray-500 p-4 hover:cursor-grab active:cursor-grabbing">
-                <h2>Share Layout</h2>
-                <IconButton
-                    hoverColour="hover:bg-gray-500"
-                    imageSrc="helpers/close.svg"
-                    altText="Close the tab"
-                    onClick={toggleShareOpen}
-                    width={20}
-                    height={20}
-                    spacing={5}
-                    extraClasses="no-drag"
-                />
-            </div>
+        <Modal title="Share Layout" onClose={toggleShareOpen}>
             <div className="flex w-72 flex-col gap-4 p-4">
                 <p className="leading-relaxed">
-                    Share the current layout with streamers {streamersFormatted}{" "}
+                    Share the current layout with {streamers.length === 1 ? "the" : ""} streamer{streamers.length !== 1 ? "s" : ""} {streamersFormatted}{" "}
                     by copying the link below:
                 </p>
                 <div className="flex flex-row">
@@ -62,11 +60,16 @@ const ShareLayout: React.FC<ShareLayoutType> = ({
                         imageSrc="helpers/copy.svg"
                         altText="Copy the link"
                         onClick={() => void onCopy()}
-                        extraClasses="rounded-r bg-kick-green p-3 text-black hover:brightness-75"
+                        extraClasses="rounded-r bg-kick-green p-3 text-black hover:brightness-75 hover:cursor-pointer"
                     />
                 </div>
+                <div>
+                    {copied && (
+                        <p className="text-kick-green">Link copied to clipboard!</p>
+                    )} 
+                </div>
             </div>
-        </div>
+        </Modal>
     );
 };
 

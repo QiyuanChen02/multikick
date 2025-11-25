@@ -1,5 +1,6 @@
 import { useState } from "react";
 import IconButton from "./helpers/iconbutton";
+import Modal from "./helpers/modal";
 
 type AddStreamerType = {
     toggleModalOpen: () => void;
@@ -17,8 +18,7 @@ const AddStreamer: React.FC<AddStreamerType> = ({
     changeChatroomStreamer,
 }) => {
     return (
-        <div className="no-scrollbar flex flex-col gap-2 overflow-auto">
-            <AddStreamerTitle toggleModalOpen={toggleModalOpen} />
+        <Modal title="Add Streamer" onClose={toggleModalOpen}>
             <div className="max-h-96 overflow-y-auto">
                 {streamers.map((streamer) => (
                     <AddStreamerItem
@@ -33,31 +33,7 @@ const AddStreamer: React.FC<AddStreamerType> = ({
                 changeChatroomStreamer={changeChatroomStreamer}
                 streamers={streamers}
             />
-        </div>
-    );
-};
-
-type AddStreamerTitleType = {
-    toggleModalOpen: () => void;
-};
-
-const AddStreamerTitle: React.FC<AddStreamerTitleType> = ({
-    toggleModalOpen,
-}) => {
-    return (
-        <div className="drag-handle flex select-none items-center justify-between border-b border-gray-500 p-4 hover:cursor-grab active:cursor-grabbing">
-            <h2>Add Streamer</h2>
-            <IconButton
-                hoverColour="hover:bg-gray-500"
-                imageSrc="helpers/close.svg"
-                altText="Close the tab"
-                onClick={toggleModalOpen}
-                width={20}
-                height={20}
-                spacing={5}
-                extraClasses="no-drag"
-            />
-        </div>
+        </Modal>
     );
 };
 
@@ -76,7 +52,7 @@ const AddStreamerItem: React.FC<AddStreamerItemType> = ({
                 {streamer}
             </p>
             <IconButton
-                hoverColour="hover:bg-gray-500"
+                hoverClasses="hover:bg-gray-500 hover:cursor-pointer"
                 spacing={6}
                 width={15}
                 height={15}
@@ -110,17 +86,18 @@ const AddNewStreamer: React.FC<AddNewStreamerType> = ({
         } else {
             addStreamer(inputStreamer);
             setInputStreamer("");
+            // Auto-switch chat to newly added streamer
             changeChatroomStreamer(inputStreamer);
         }
     };
 
     const onInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setInputStreamer(e.target.value);
-        setErrorMessage("");
+        setErrorMessage(""); // Clear error on input
     };
 
     return (
-        <div className="flex flex-col gap-2 px-4 py-2">
+        <div className="flex flex-col gap-2 px-4 pb-4">
             <div className="flex gap-2">
                 <input
                     className="box-border rounded border border-gray-500 bg-gray-500 px-2 outline-none focus:border-white"
@@ -130,13 +107,13 @@ const AddNewStreamer: React.FC<AddNewStreamerType> = ({
                     onKeyDown={(e) => e.key === "Enter" && onAddStreamer()}
                 />
                 <button
-                    className="rounded bg-kick-green p-3 text-black hover:brightness-75"
+                    className="rounded bg-kick-green p-3 text-black hover:brightness-75 hover:cursor-pointer"
                     onClick={onAddStreamer}
                 >
                     Add
                 </button>
             </div>
-            <p className="text-center text-sm text-red-500">{errorMessage}</p>
+            <p className="text-red-500">{errorMessage}</p>
         </div>
     );
 };

@@ -19,6 +19,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.17",
     "@types/eslint": "^9.6.1",
     "@types/node": "^24.10.1",
@@ -37,5 +38,8 @@
   },
   "ct3aMetadata": {
     "initVersion": "7.14.0"
+  },
+  "engines": {
+    "node": ">=22.x"
   }
 }

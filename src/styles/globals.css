@@ -1,5 +1,9 @@
 @import 'tailwindcss';
 
+@theme {
+    --color-kick-green: #53FC18;
+}
+
 @layer utilities {
     .center {
         top: 50%;

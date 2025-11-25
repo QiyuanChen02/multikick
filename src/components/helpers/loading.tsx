@@ -5,7 +5,10 @@ type LoadingSpinnerType = {
     height?: number;
 };
 
-// Generates loading spinner when loading
+/**
+ * Centered loading spinner overlay.
+ * Displayed during initial data hydration to prevent UI flashes.
+ */
 export const LoadingSpinner: React.FC<LoadingSpinnerType> = ({
     width = 24,
     height = 24,

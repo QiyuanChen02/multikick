@@ -9,12 +9,16 @@ type IconButtonType = {
     height?: number;
     text?: string | null;
     spacing?: number;
-    visibleOnParentHover?: boolean;
-    eventPropagation?: boolean;
-    hoverColour?: string;
+    visibleOnParentHover?: boolean; // Show only when parent has hover state
+    eventPropagation?: boolean; // Whether to stop click event bubbling
+    hoverClasses?: string;
     extraClasses?: string;
 };
 
+/**
+ * Highly configurable icon button component.
+ * Supports visibility control, event propagation, and flexible styling.
+ */
 const IconButton: React.FC<IconButtonType> = ({
     imageSrc,
     altText,
@@ -26,7 +30,7 @@ const IconButton: React.FC<IconButtonType> = ({
     text = null,
     visibleOnParentHover = false,
     eventPropagation = true,
-    hoverColour = "",
+    hoverClasses = "",
     extraClasses = "",
 }) => {
     const onClickButton = (
@@ -35,6 +39,7 @@ const IconButton: React.FC<IconButtonType> = ({
         e: React.MouseEvent<HTMLButtonElement>
     ) => {
         onClick();
+        // Prevent event from bubbling up (useful for nested clickable elements)
         if (!eventPropagation) {
             e.stopPropagation();
         }
@@ -54,7 +59,7 @@ const IconButton: React.FC<IconButtonType> = ({
     return (
         <button
             style={{ padding: `${spacing}px` }}
-            className={`flex items-center justify-center overflow-hidden ${hoverColour} ${extraClasses} ${
+            className={`flex items-center justify-center overflow-hidden ${hoverClasses} ${extraClasses} ${
                 visibleOnParentHover ? "invisible group-hover:visible" : ""
             }`}
             onMouseDown={(e) =>
